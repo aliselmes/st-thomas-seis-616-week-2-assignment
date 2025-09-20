@@ -161,6 +161,9 @@
         "KeyName": {
           "Ref": "KeyPair"
         },
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceProfile"
+        },
         "SecurityGroupIds": [
           {
             "Ref": "WebserversSG"
@@ -191,6 +194,9 @@
         },
         "KeyName": {
           "Ref": "KeyPair"
+        },
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceProfile"
         },
         "SecurityGroupIds": [
           {
@@ -319,6 +325,42 @@
         },
         "Port": 80,
         "Protocol": "HTTP"
+      }
+    },
+    "EC2S3Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "EC2S3Role"
+          }
+        ]
+      }
+    },
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "EC2S3Role"
+          }
+        ]
       }
     }
   },
